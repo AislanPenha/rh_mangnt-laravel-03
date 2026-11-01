@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -15,7 +16,7 @@ class ProfileController extends Controller
         return view('user.profile');
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request): RedirectResponse
     {
         // form validation
         $request->validate(
@@ -40,7 +41,7 @@ class ProfileController extends Controller
         return redirect()->back()->with('success', 'Password updated successfully.');
     }
 
-    public function updateUserData(Request $request)
+    public function updateUserData(Request $request): RedirectResponse
     {
         // form validation
         $request->validate(
