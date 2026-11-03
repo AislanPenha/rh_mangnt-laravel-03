@@ -1,6 +1,6 @@
 <div class="col-3">
     <div class="border p-5 shadow-sm">
-        <form action="{{ route('user.profile.update-password') }}" method="post">
+        <form action="{{ route('user.update-password') }}" method="post">
             @csrf
             <h3>Change password</h3>
 

@@ -42,16 +42,15 @@ class DepartmentController extends Controller
             'name' => $request->name
         ]);
 
-        return redirect()->route('departments');
+        return redirect()->route('departments.departments');
     }
 
-    public function editDepartment(Request $request, int $id): View|RedirectResponse
+    public function editDepartment(int $id): View|RedirectResponse
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
 
-        // check if id === 1
-        if(intval($id)===1) {
-            return redirect()->route('departments');
+        if($this->isDepartmentEditableOrDeletable($id)) {
+            return redirect()->route('departments.departments');
         }
         // $user = User::with('permissions')->findOrFail($id);
         $department = Department::findOrFail($id);
@@ -59,7 +58,7 @@ class DepartmentController extends Controller
         return view('department.edit-department', compact('department'));
     }
 
-    public function updateDepartment(Request $request): View|RedirectResponse
+    public function updateDepartment(Request $request): RedirectResponse
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
 
@@ -72,10 +71,8 @@ class DepartmentController extends Controller
             ]
         );
         
-
-        // check if id === 1
-        if(intval($id) ===1) {
-            return redirect()->route('departments');
+        if($this->isDepartmentEditableOrDeletable($id)) {
+            return redirect()->route('departments.departments');
         }
 
         $department = Department::findOrFail($id);
@@ -84,16 +81,15 @@ class DepartmentController extends Controller
             'name' => $request->name
         ]);
 
-        return redirect()->route('departments');
+        return redirect()->route('departments.departments');
     }
 
-    public function deleteDepartment(int $id)
+    public function deleteDepartment(int $id): View|RedirectResponse
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
 
-        // check if id === 1
-        if(intval($id) ===1) {
-            return redirect()->route('departments');
+        if($this->isDepartmentEditableOrDeletable($id)) {
+            return redirect()->route('departments.departments');
         }
 
         $department = Department::findOrFail($id);
@@ -102,19 +98,23 @@ class DepartmentController extends Controller
         return view('department.delete-department', compact('department'));
     }
 
-    public function deleteDepartmentConfirm(int $id)
+    public function deleteDepartmentConfirm(int $id): RedirectResponse
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
 
-        // check if id === 1
-        if(intval($id) ===1) {
-            return redirect()->route('departments');
+        if($this->isDepartmentEditableOrDeletable($id)) {
+            return redirect()->route('departments.departments');
         }
 
         $department = Department::findOrFail($id);
 
         $department->delete();
 
-        return redirect()->route('departments');
+        return redirect()->route('departments.departments');
+    }
+
+    private function isDepartmentEditableOrDeletable(int $id): bool
+    {
+        return in_array(intval($id), [1, 2]);
     }
 }
