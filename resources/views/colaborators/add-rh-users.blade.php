@@ -6,7 +6,7 @@
 
         <hr>
 
-        <form action="{{ route('colaborators.create-colaborator') }}" method="post">
+        <form action="{{ route('colaborators.rh.create-colaborator') }}" method="post">
 
             @csrf
 
@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="{{ route('colaborators.rh-users') }}" class="btn btn-outline-danger me-3">Cancel</a>
+                    <a href="{{ route('colaborators.rh.rh-users') }}" class="btn btn-outline-danger me-3">Cancel</a>
                     <button type="submit" class="btn btn-primary">Create colaborator</button>
                 </div>
 

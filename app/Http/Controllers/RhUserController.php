@@ -18,10 +18,12 @@ class RhUserController extends Controller
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
         // $colaborators = User::where('role', 'rh')->get();
-        $colaborators = User::with('detail')
+        $colaborators = User::withTrashed()
+                                ->with('detail')
                                 ->where('role', 'rh')
                                 ->orderBy('id', 'desc')
                                 ->get();
+
         return view('colaborators.rh-users', compact('colaborators'));
     }
 
@@ -83,7 +85,7 @@ class RhUserController extends Controller
         // send email to user
         $url = route('confirm-account', $token);
         Mail::to($user->email)->send(new ConfirmAccountEmail($url));
-        return redirect()->route('colaborators.rh-users')->with('success', 'Colaborator created successfully');
+        return redirect()->route('colaborators.rh.rh-users')->with('success', 'Colaborator created successfully');
     }
 
     public function editRhColaborator(int $id): View
@@ -91,7 +93,6 @@ class RhUserController extends Controller
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
 
         $colaborator = User::with('detail')->where('role', 'rh')->findOrFail($id);
-
 
         return view('colaborators.edit-rh-users', compact('colaborator'));
     }
@@ -110,19 +111,17 @@ class RhUserController extends Controller
         );
 
         $user = User::findOrFail($request->user_id);
-
         $user->detail->update([
             'salary' => $request->salary,
             'admission_date' => $request->admission_date
         ]);
 
-        return redirect()->route('colaborators.rh-users')->with('success', 'Colaborator updated successfully');
+        return redirect()->route('colaborators.rh.rh-users')->with('success', 'Colaborator updated successfully');
     }
 
     public function deleteRhColaborator(int $id): View
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
-
         $colaborator = User::findOrFail($id);
 
         // display page for confirmation
@@ -132,13 +131,18 @@ class RhUserController extends Controller
     public function deleteRhColaboratorConfirm(int $id): RedirectResponse
     {
         Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
-
-
-
         $colaborator = User::findOrFail($id);
-
         $colaborator->delete();
 
-        return redirect()->route('colaborators.rh-users')->with('success', 'Colaborator deleted successfully');
+        return redirect()->route('colaborators.rh.rh-users')->with('success', 'Colaborator deleted successfully');
+    }
+
+    public function restoreRhColaborator(int $id): RedirectResponse
+    {
+        Gate::allows('admin') ?: abort(403, 'You are not authorized to access this page');
+        $colaborator = User::withTrashed()->where('role', 'rh')->findOrFail($id);
+        $colaborator->restore();
+
+        return redirect()->route('colaborators.rh.rh-users')->with('success', 'Colaborator restored with success');
     }
 }

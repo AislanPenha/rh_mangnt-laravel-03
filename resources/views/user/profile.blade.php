@@ -16,7 +16,9 @@
 
                 <x-profile-user-change-password />
 
-                <x-profile-user-change-data />
+                <x-profile-user-change-data :colaborator="$colaborator" />
+
+                <x-profile-user-change-address :colaborator="$colaborator" />
 
             </div>
 
